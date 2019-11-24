@@ -1,0 +1,16 @@
+{
+    "name": "tzmud/verificator",
+    "description": "Verify action by additional channel",
+    "type": "library",
+    "require": {
+        "php": "^7.2"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Tomek Żmudziński",
+            "email": "t.zmudzinski@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev"
+}
