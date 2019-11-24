@@ -3,7 +3,8 @@
     "description": "Verify action by additional channel",
     "type": "library",
     "require": {
-        "php": "^7.2"
+        "php": "^7.2",
+        "guzzlehttp/guzzle": "~6.0"
     },
     "license": "MIT",
     "authors": [
@@ -12,5 +13,17 @@
             "email": "t.zmudzinski@gmail.com"
         }
     ],
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "Tzm\\Authorizator\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Tzm\\Authorizator\\AuthorizatorProvider"
+            ]
+        }
+    }
 }
