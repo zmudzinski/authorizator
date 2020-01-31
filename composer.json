@@ -1,5 +1,5 @@
 {
-    "name": "tzmud/verificator",
+    "name": "tzmudz/authorizator",
     "description": "Verify action by additional channel",
     "type": "library",
     "require": {
