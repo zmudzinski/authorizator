@@ -20,6 +20,17 @@ class ExampleChannel extends Channel
     }
 
     /**
+     * String displayed in form if there is only one channel set in the action.
+     * The preferred method to return a channel description is to use Laravel Localization
+     *
+     * @return mixed
+     */
+    public function getChannelName()
+    {
+        return 'E-mail';
+    }
+
+    /**
      * This method sends code to user
      *
      * @param $user
@@ -31,4 +42,6 @@ class ExampleChannel extends Channel
         // TODO: Implement sendMessage() method.
         // e.g Mail::to($user)->send(new SendAuthorizationCode($code));
     }
+
+
 }

@@ -74,6 +74,18 @@ abstract class AuthorizatorAction
     }
 
     /**
+     * Create authorization statically
+     *
+     * @return static
+     */
+    public static function createAuth()
+    {
+        $auth = new static();
+        $auth->createAuthorization();
+        return $auth;
+    }
+
+    /**
      * Create new verification data in database
      *
      * @return bool

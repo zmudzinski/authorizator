@@ -61,21 +61,17 @@ There are two types of classes that need to provide `Tzm\Authorizator\Authorizat
 
 Out of the box this package comes with vue component. This component has all forms and methods. There are two endpoints: `authorization/send` and `authorization/check` (both use `POST` method). These endpoints are in `Tzm\Authorizator\AuthorizationController`. There is also `authorization/create` endpoint but this we will discussed later. 
 
-In the Controller in which authorization is requested (or any other place like middleware etc.) new authorization in database is created. This happens by executing `createAuthorization()` method from `Tzm\Authorizator\AuthorizatorAction`. Also new variable is stored in user session (with default name `_authorizator_uuid` and contains `uuid` form database). Next by `returnView()` method the view is returned. So, simply the Controller will look like:
+In the Controller in which authorization is requested (or any other place like middleware etc.) new authorization in database is created. This happens by executing static method `Transaction::createAuth()`.
+ The `Transaction` object extends `Tzm\Authorizator\AuthorizatorAction` class. Also new variable is stored in user session (with default name `_authorizator_uuid` and contains `uuid` form database). Next by `returnView()` method the view is returned. So, simply the Controller will look like:
 ```php
+use App\Services\AuthorizationActions\Transaction;
+
 class TransactionController extends Controller
 {
-    private $transaction;
-
-    public function __construct(Transaction $transaction)
-    {
-        $this->transaction = $transaction;
-    }
-
     public function create()
     {
-        $this->transaction->createAuthorization();
-        return $this->transaction->returnView();
+        $action = Transaction::createAuth();
+        return $action->returnView();
     }
 }
 ```
@@ -168,32 +164,18 @@ php artisan vendor:publish --tag=authorizator.views
 Finally you can extends this view for your master template. Don't worry, this view is initialized in `AuthorizatorProvider` with name so there is no more action needed. 
 
 ### Make it works
-Finally we have all required elements: delivery channel class, action class, blade view and generated vue component. Now it's time to set it all.
+Finally we have all required elements: delivery channel class, action class, Blade view and generated vue component. Now it's time to set it all.
 
 Create an example controller: 
 ```php
-<?php
-
-namespace App\Http\Controllers;
-
-use App\Authorizator\Transaction;
+use App\Services\AuthorizationActions\Transaction;
 
 class TransactionController extends Controller
 {
-    /**
-     * @var Transaction
-     */
-    private $transaction;
-
-    public function __construct(Transaction $transaction)
-    {
-        $this->transaction = $transaction;
-    }
-
     public function create()
     {
-        $this->transaction->createAuthorization();
-        return $this->transaction->returnView();
+        $action = Transaction::createAuth();
+        return $action->returnView();
     }
 }
 ```
