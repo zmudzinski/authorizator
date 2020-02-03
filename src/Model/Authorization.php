@@ -116,11 +116,11 @@ class Authorization extends Model
     /**
      * Find model by session uuid
      *
+     * @param $uuid
      * @return mixed
      */
-    public static function retrieveFromSession()
+    public static function retrieveByUuid($uuid)
     {
-        $uuid = self::retrieveUuidFromSession();
         return self::whereUuid($uuid)->first();
     }
 

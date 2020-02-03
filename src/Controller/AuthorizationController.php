@@ -4,6 +4,7 @@ namespace Tzm\Authorizator;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Tzm\Authorizator\Authorization;
 use Tzm\Authorizator\Exceptions\AuthorizatorException;
 
 class AuthorizationController extends Controller
@@ -14,6 +15,7 @@ class AuthorizationController extends Controller
      * @param Request $request
      * @return string
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws \Exception
      */
     public function create(Request $request)
     {
@@ -25,7 +27,7 @@ class AuthorizationController extends Controller
 
         $service = app()->make($class);
 
-        if (!$service instanceof AuthorizatorAction){
+        if (!$service instanceof AuthorizatorAction) {
             throw new \Exception(sprintf('Service %s must extends %s abstract class', get_class($service), AuthorizatorAction::class));
         }
 
@@ -39,14 +41,13 @@ class AuthorizationController extends Controller
      */
     public function send(Request $request)
     {
-        //TODO: Verification
-        /** @var Authorization $authorization */
-        $channel = $request->input('channel');
-
-        $authorization = Authorization::retrieveFromSession();
-        $authorization->setChannel($channel);
-
         try {
+            /** @var Authorization $authorization */
+            $channel = $request->input('channel');
+
+            $authorization = Authorization::retrieveFromSession();
+            $authorization->setChannel($channel);
+
             AuthorizatorAction::deliverCodeToUser($channel);
             return response(['status' => 'ok']);
         } catch (\Exception $e) {
@@ -64,15 +65,21 @@ class AuthorizationController extends Controller
      */
     public function verify(Request $request)
     {
-        //TODO: Verification
-        /** @var Authorization $authorization */
-        /** @var AuthorizatorAction $service */
-        $code = $request->get('code');
-        $authorization = Authorization::retrieveFromSession();
-        $service = app()->make($authorization->class);
-
         try {
-            $service->verifyCode($code, $authorization);
+            /** @var Authorization $authorization */
+            /** @var AuthorizatorAction $service */
+            $code = $request->get('code');
+            $uuid = $request->get('uuid') ?? Authorization::retrieveUuidFromSession();
+
+            $authorization = Authorization::retrieveByUuid($uuid);
+
+            if (!$authorization) {
+                return response(['status' => 'invalid', 'message' => __('No authorization found')]);
+            }
+
+            $service = app()->make($authorization->class);
+
+            $service->verifyCode($code, $authorization, $uuid);
             $service->afterAuthorization();
             $authorization->markAsVerified();
             return response([
@@ -82,7 +89,8 @@ class AuthorizationController extends Controller
         } catch (AuthorizatorException $e) {
             return response(['status' => 'invalid', 'message' => __($e->getMessage())]);
         } catch (\Exception $e) {
-            return response(['status' => 'invalid', 'message' => __($e->getMessage())]);
+            logger($e);
+            return response(['status' => 'error', 'message' => __('Error occurred while checking code')]);
         }
     }
 
