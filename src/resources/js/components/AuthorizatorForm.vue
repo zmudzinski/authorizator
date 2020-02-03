@@ -14,19 +14,24 @@
         </div>
 
         <div v-if="pages.selectChannel && !isProcessing">
+
             <p class="card-text">
                 <slot></slot>
             </p>
-            <div class="form-group">
 
+            <div class="form-group" v-if="allowedChannels.length > 1">
                 <div class="form-check" v-for="item in allowedChannels" :key=item.id>
-                    <input v-model="channel" class="form-check-input" type="radio" :value=item.name :id="'radio_'+item.id">
+                    <input v-model="channel" class="form-check-input" type="radio" :value=item.class :id="'radio_'+item.id">
                     <label class="form-check-label" :for="'radio_'+item.id">
                         {{ item.description }}
                     </label>
                 </div>
-
             </div>
+
+            <p class="card-text" v-else>
+                {{ labels.singleChannelInstructions }}: {{ allowedChannels[0].name }}
+            </p>
+
             <button :disabled="buttons.sendCode" class="btn btn-primary btn-success" @click="sendCode">{{ labels.sendCode }}</button>
         </div>
 
@@ -72,6 +77,7 @@
             labels: {
                 default: function () {
                     return {
+                        singleChannelInstructions: 'Code will be delivered by',
                         sendCode: 'Send code',
                         enterCode: 'Enter received code',
                         confirmCode: 'Confirm',
@@ -88,7 +94,6 @@
                 resendButtonLabel: this.labels.resendButtonDefault,
                 isProcessing: false,
                 countdown: this.countdownValue,
-                chooseChannel: true,
                 errorMessage: '',
                 channel: '',
                 code: '',
@@ -190,6 +195,11 @@
                 }
             }
         },
+        mounted() {
+            if (this.allowedChannels.length === 1) {
+                this.channel = this.allowedChannels[0].class;
+            }
+        }
     }
 </script>
 
