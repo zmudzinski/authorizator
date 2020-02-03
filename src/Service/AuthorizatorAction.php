@@ -63,7 +63,8 @@ abstract class AuthorizatorAction
                 $channels[] = [
                     'id'          => $id++,
                     'description' => $channelInstance->getChannelDescription(),
-                    'name'        => $channelInstance->getClassName(),
+                    'name'        => $channelInstance->getChannelName(),
+                    'class'       => $channelInstance->getClassName(),
                 ];
             } else {
                 throw new AuthorizatorException(sprintf('Channel %s must extends %s abstract class', get_class($channelInstance), Channel::class));
