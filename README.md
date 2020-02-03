@@ -25,7 +25,7 @@ Examples of use:
 * [How to use](#how-to-use)
     * [Preparations](#preparations)
     * [Create code delivery channel](#create-code-delivery-channel)
-    * [Create an authorization](#create-an-authorization)
+    * [Create an authorization](#create-an-authorization-action)
     * [Make it works](#make-it-works)
 * [Customization](#customization)
     * [Migration](#migrations)
@@ -118,10 +118,13 @@ Note that channel class must extend `Tzm\Authorizator\Service\AuthorizatorChanne
 
 This class requires two methods:
  * `getChannelDescription()` - will generate description of current channel, f.ex. it could be generated from  localization `.json` file. It will be shown in channel choose form in the radio label.
+ * `getChannelName()` - returns channel name. It will be displayed if there will be only one channel.  
  * `sendMessage(User $user, $code)` - this method provide code delivery to the user. In this method you will handle how the code will  be delivered to user. F.ex. if you want to send code by email you can use Laravel mail facade: 
  `Mail::to($user)->send(new SendAuthorizationCode($code))`. 
+ 
+ Don't forget to run `composer dump-autoload`.
 
-### Create an authorization
+### Create an authorization action
 Afterwards you have to create a new class that inherits `Tzm\Authorizator\AuthorizatorAction`. It handles an action that requires authorization. 
 
 Class must declare method `afterAuthorization()`. This method will be called after successful authorization f.ex. a money transfer will be executed. Finally you have to define `$allowedChannels` array contains name of code delivery channel classes that will be assign to this action f.ex.:
@@ -135,6 +138,8 @@ Furthermore you can set the code expiration time of in `$expiresInMinutes` prope
 
 Notice that if your app implements `User` model is in other namespace than `App\User` you can override method 
 `AuthorizatorAction::getUser()`.
+
+ Don't forget to run `composer dump-autoload`.
 
 ### Create view template
 The package's view contains only form with vue component:
@@ -276,4 +281,4 @@ If you want to translate strings from `AuthorizationForm.vue` you can pass a tra
 If you have any questions or problems fell free to contact us.
 
 ## License 
-Mit
+MIT
