@@ -19,6 +19,14 @@ abstract class Channel
     abstract public function getChannelDescription();
 
     /**
+     * String displayed in form if there is only one channel set in the action.
+     * The preferred method to return a channel description is to use Laravel Localization
+     *
+     * @return mixed
+     */
+    abstract public function getChannelName();
+
+    /**
      * This method sends code to user
      *
      * @param $user
