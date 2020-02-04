@@ -2,6 +2,7 @@
 
 namespace Tzm\Authorizator;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Tzm\Authorizator\Exceptions\AuthorizatorException;
@@ -50,25 +51,22 @@ abstract class AuthorizatorAction
     /**
      * Get allowed channels for Vue component
      * @return array
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws BindingResolutionException
      * @throws \Exception
      */
     protected function getAllowedChannels()
     {
         $channels = [];
-        $id = 1;
         foreach ($this->allowedChannels as $channel) {
             $channelInstance = app()->make($channel);
-            if ($channelInstance instanceof Channel) {
-                $channels[] = [
-                    'id'          => $id++,
-                    'description' => $channelInstance->getChannelDescription(),
-                    'name'        => $channelInstance->getChannelName(),
-                    'class'       => $channelInstance->getClassName(),
-                ];
-            } else {
+            if (!$channelInstance instanceof Channel) {
                 throw new AuthorizatorException(sprintf('Channel %s must extends %s abstract class', get_class($channelInstance), Channel::class));
             }
+            $channels[] = [
+                'description' => $channelInstance->getChannelDescription(),
+                'name' => $channelInstance->getChannelName(),
+                'class' => $channelInstance->getClassName(),
+            ];
         }
         return $channels;
     }
@@ -80,15 +78,13 @@ abstract class AuthorizatorAction
      */
     public static function createAuth()
     {
-        $auth = new static();
-        $auth->createAuthorization();
-        return $auth;
+        return (new static())->createAuthorization();
     }
 
     /**
      * Create new verification data in database
      *
-     * @return bool
+     * @return self
      */
     public function createAuthorization()
     {
@@ -100,7 +96,7 @@ abstract class AuthorizatorAction
         $authorization->verification_code = $this->generateCode();
         $this->setUuidToSession($this->getUuid());
         $authorization->save();
-        return true;
+        return $this;
     }
 
     /**
@@ -129,7 +125,7 @@ abstract class AuthorizatorAction
      *
      * @param string $channel - set channel by which code should be sent to user
      * @return void
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws BindingResolutionException
      */
     public static function deliverCodeToUser($channel)
     {

@@ -1,7 +1,8 @@
 {
     "name": "tzmudz/authorizator",
-    "description": "Verify action by additional channel",
+    "description": "This is an easy to use, powerful and extendable Laravel package for authorization user actions via custom channels.",
     "type": "library",
+    "homepage": "https://github.com/zmudzinski/authorizator",
     "require": {
         "php": "^7.2",
         "guzzlehttp/guzzle": "~6.0"

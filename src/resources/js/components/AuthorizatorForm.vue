@@ -20,9 +20,9 @@
             </p>
 
             <div class="form-group" v-if="allowedChannels.length > 1">
-                <div class="form-check" v-for="item in allowedChannels" :key=item.id>
-                    <input v-model="channel" class="form-check-input" type="radio" :value=item.class :id="'radio_'+item.id">
-                    <label class="form-check-label" :for="'radio_'+item.id">
+                <div class="form-check" v-for="(item, index) in allowedChannels" :key=index>
+                    <input v-model="channel" class="form-check-input" type="radio" :value=item.class :id="'radio_'+index">
+                    <label class="form-check-label" :for="'radio_'+index">
                         {{ item.description }}
                     </label>
                 </div>
