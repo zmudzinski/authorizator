@@ -2,6 +2,7 @@
 
 namespace Tzm\Authorizator;
 
+use App\Console\Commands\DeleteExpiredCodes;
 use Illuminate\Support\ServiceProvider;
 
 class AuthorizatorProvider extends ServiceProvider
@@ -43,5 +44,11 @@ class AuthorizatorProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/Service/AuthorizatorChannels/ExampleChannel.php' => base_path('app/Services/AuthorizatorChannels/ExampleChannel.php')
         ], 'authorizator.example-channel');
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                DeleteExpiredCodes::class,
+            ]);
+        }
     }
 }

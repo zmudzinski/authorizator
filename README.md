@@ -245,7 +245,9 @@ Vue component is used in Blade view. It is responsible for handling whole author
 ```bash
 php artisan vendor:publish --tag=authorizator.vue
 ```
-Next you have to update it in `app.js` declaration of component.
+Next you have to update declaration in `app.js` declaration of component.
+
+**NOTICE!** There is no needs to use vue framework. If you want you can handle forms as you want.
 
 ### Localization
 All of strings from PHP are translatable. All you have to do is to create a language file in `resource/lang` folder f.ex. `pl.json` with content:
