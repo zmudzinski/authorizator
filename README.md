@@ -33,6 +33,7 @@ Examples of use:
     * [Blade View](#blade-view)
     * [vue component](#vue-component)
     * [Localization](#localization)
+* [Delete expired codes](#delete-expired-codes)
 * [Contributing](#contributing)
 * [Feedback](#feedback)
 * [License](#license)
@@ -245,7 +246,9 @@ Vue component is used in Blade view. It is responsible for handling whole author
 ```bash
 php artisan vendor:publish --tag=authorizator.vue
 ```
-Next you have to update it in `app.js` declaration of component.
+Next you have to update declaration in `app.js` declaration of component.
+
+**NOTICE!** There is no needs to use vue framework. If you want you can handle forms as you want.
 
 ### Localization
 All of strings from PHP are translatable. All you have to do is to create a language file in `resource/lang` folder f.ex. `pl.json` with content:
@@ -255,6 +258,12 @@ All of strings from PHP are translatable. All you have to do is to create a lang
 }
 ```
 If you want to translate strings from `AuthorizationForm.vue` you can pass a translated props to component. 
+
+## Delete expired codes
+To remove all expired codes from database, simply use artisan command:
+```bash
+php artisan authorizator:purge 
+```
 
 ## Contributing
 1. Fork it
