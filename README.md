@@ -62,7 +62,7 @@ There are two types of classes that need to provide `Tzm\Authorizator\Authorizat
 Out of the box this package comes with vue component. This component has all forms and methods. There are two endpoints: `authorization/send` and `authorization/check` (both use `POST` method). These endpoints are in `Tzm\Authorizator\AuthorizationController`. There is also `authorization/create` endpoint but this we will discussed later. 
 
 In the Controller in which authorization is requested (or any other place like middleware etc.) new authorization in database is created. This happens by executing static method `Transaction::createAuth()`.
- The `Transaction` object extends `Tzm\Authorizator\AuthorizatorAction` class. Also new variable is stored in user session (with default name `_authorizator_uuid` and contains `uuid` form database). Next by `returnView()` method the view is returned. So, simply the Controller will look like:
+ The `Transaction` object extends `Tzm\Authorizator\AuthorizatorAction` class. Also new variable is stored in user session (with default name `_authorizator_uuid` and contains `uuid` form database). Next by `returnView()` method the view is returned to user. So, simply the Controller will look like:
 ```php
 use App\Services\AuthorizationActions\Transaction;
 
@@ -70,8 +70,7 @@ class TransactionController extends Controller
 {
     public function create()
     {
-        $action = Transaction::createAuth();
-        return $action->returnView();
+        return Transaction::createAuth()->returnView();
     }
 }
 ```
@@ -91,6 +90,10 @@ In your `POST` request you have to add a `class` parameter with name of class ex
 ## How to use
 
 ### Preparations 
+**NOTICE!** 
+
+_Out of the box this package uses vue component as default but if you don't wont use vue.js as your frontend framework you can create your own form handler._
+
 To use vue component that handles authorization, declare in `app.js` package's `.vue` file:
 
 ```js
@@ -135,7 +138,7 @@ Furthermore you can set the code expiration time of in `$expiresInMinutes` prope
 Notice that if your app implements `User` model is in other namespace than `App\User` you can override method 
 `AuthorizatorAction::getUser()`.
 
- Don't forget to run `composer dump-autoload`.
+Don't forget to run `composer dump-autoload`.
 
 ### Create view template
 The package's view contains only form with vue component:
@@ -174,15 +177,16 @@ class TransactionController extends Controller
 {
     public function create()
     {
-        $action = Transaction::createAuth();
-        return $action->returnView();
+        return Transaction::createAuth()->returnView();
     }
 }
 ```
 
 Let's analyze the code.
 
-In the constructor we inject the `Transaction` class (`Transaction` extends `Tzm\Authorizator\AuthorizatorAction` class). In the public controller's method`create()` the `Transaction::createAuthorization()` method is executed. This will insert data to database and set `uuid` in session. Next method returns default Blade view by `returnView()`. That's all! 
+`Transaction` extends `Tzm\Authorizator\AuthorizatorAction` class. 
+
+In the public controller's method`create()` the `Transaction::createAuth()` method is executed. This will insert data to database and set `uuid` in session. Next method, returns default Blade view by `returnView()`. That's all! 
 
 Now user can see the form and choose the authorization code deliver channel. After validation the method `afterAuthorization()` form `Transaction` class is executed.
 
