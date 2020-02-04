@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace Tzm\Authorizator\Console\Commands;
 
 use Illuminate\Console\Command;
 
@@ -37,6 +37,6 @@ class DeleteExpiredCodes extends Command
      */
     public function handle()
     {
-        Tzm\Authorizator\Authorization::withoutGlobalScopes()->where('expires_at', '<', now())->delete();
+        \Tzm\Authorizator\Authorization::withoutGlobalScopes()->where('expires_at', '<', now())->delete();
     }
 }

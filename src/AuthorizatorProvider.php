@@ -47,7 +47,7 @@ class AuthorizatorProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->commands([
-                DeleteExpiredCodes::class,
+                \Tzm\Authorizator\Console\Commands\DeleteExpiredCodes::class,
             ]);
         }
     }
