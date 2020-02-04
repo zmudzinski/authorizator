@@ -26,23 +26,23 @@ class AuthorizatorProvider extends ServiceProvider
     public function boot()
     {
         $this->loadViewsFrom(__DIR__ . '/resources/views', 'authorizator');
-        $this->loadMigrationsFrom(__DIR__.'/migrations');
-        $this->loadRoutesFrom(__DIR__.'/routes.php');
+        $this->loadMigrationsFrom(__DIR__ . '/migrations');
+        $this->loadRoutesFrom(__DIR__ . '/routes.php');
 
         $this->publishes([
             __DIR__ . '/resources/views' => resource_path('views/vendor/authorizator'),
         ], 'authorizator.views');
         $this->publishes([
-            __DIR__.'/resources' => resource_path('js/vendor/authorizator'),
+            __DIR__ . '/resources' => resource_path('js/vendor/authorizator'),
         ], 'authorizator.vue');
         $this->publishes([
-            __DIR__.'/migrations/' => database_path('migrations')
+            __DIR__ . '/migrations/' => database_path('migrations')
         ], 'authorizator.migrations');
         $this->publishes([
-            __DIR__.'/routes.php' => base_path('routes/authorizator.php')
+            __DIR__ . '/routes.php' => base_path('routes/authorizator.php')
         ], 'authorizator.routes');
         $this->publishes([
-            __DIR__.'/Service/AuthorizatorChannels/ExampleChannel.php' => base_path('app/Services/AuthorizatorChannels/ExampleChannel.php')
+            __DIR__ . '/Service/AuthorizatorChannels/ExampleChannel.php' => base_path('app/Services/AuthorizatorChannels/ExampleChannel.php')
         ], 'authorizator.example-channel');
 
         if ($this->app->runningInConsole()) {

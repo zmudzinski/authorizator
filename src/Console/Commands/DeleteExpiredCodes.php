@@ -11,7 +11,7 @@ class DeleteExpiredCodes extends Command
      *
      * @var string
      */
-    protected $signature = 'authorizator:name';
+    protected $signature = 'authorizator:purge';
 
     /**
      * The console command description.
@@ -37,6 +37,6 @@ class DeleteExpiredCodes extends Command
      */
     public function handle()
     {
-        //
+        Tzm\Authorizator\Authorization::withoutGlobalScopes()->where('expires_at', '<', now())->delete();
     }
 }

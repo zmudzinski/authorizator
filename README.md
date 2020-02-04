@@ -33,6 +33,7 @@ Examples of use:
     * [Blade View](#blade-view)
     * [vue component](#vue-component)
     * [Localization](#localization)
+* [Delete expired codes](#delete-expired-codes)
 * [Contributing](#contributing)
 * [Feedback](#feedback)
 * [License](#license)
@@ -257,6 +258,12 @@ All of strings from PHP are translatable. All you have to do is to create a lang
 }
 ```
 If you want to translate strings from `AuthorizationForm.vue` you can pass a translated props to component. 
+
+## Delete expired codes
+To remove all expired codes from database, simply use artisan command:
+```bash
+php artisan authorizator:purge 
+```
 
 ## Contributing
 1. Fork it
