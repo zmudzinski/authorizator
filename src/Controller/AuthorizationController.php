@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Tzm\Authorizator\Authorization;
 use Tzm\Authorizator\Exceptions\AuthorizatorException;
+use Tzm\Authorizator\AuthorizatorAction;
 
 class AuthorizationController extends Controller
 {
@@ -43,15 +44,18 @@ class AuthorizationController extends Controller
         try {
             /** @var Authorization $authorization */
             /** @var AuthorizatorAction $service */
+
             $channel = $request->input('channel');
 
             $authorization = Authorization::getAuthorization($request->get('uuid'));
 
-            $authorization->setChannel($channel);
-
             $service = app()->make($authorization->class);
 
-            $service->deliverCodeToUser($channel);
+            $authorization->setExpiration($service->getExpiresInMinutes()); // Update expiration time for code
+
+            $authorization->setChannel($channel);
+
+            $service->deliverCodeToUser($authorization);
 
             return response(['status' => 'ok']);
         } catch (\Exception $e) {

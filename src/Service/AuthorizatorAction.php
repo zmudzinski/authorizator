@@ -5,9 +5,7 @@ namespace Tzm\Authorizator;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use Tzm\Authorizator\Exceptions\AuthorizatorException;
-use Tzm\Authorizator\Service\AuthorizatorChannels\Channel;
-
+use Tzm\Authorizator\{Exceptions\AuthorizatorException, Service\AuthorizatorChannels\Channel, Authorization};
 
 abstract class AuthorizatorAction
 {
@@ -47,6 +45,16 @@ abstract class AuthorizatorAction
      * @return mixed
      */
     abstract public function afterAuthorization();
+
+    /**
+     * Getter for $expiresInMinutes
+     *
+     * @return int
+     */
+    public function getExpiresInMinutes() : int
+    {
+        return $this->expiresInMinutes;
+    }
 
     /**
      * Get allowed channels for Vue component
@@ -92,10 +100,9 @@ abstract class AuthorizatorAction
         $authorization->user_id = Auth::user()->id;
         $authorization->class = get_called_class();
         $authorization->uuid = $this->generateUuid();
-        $authorization->expires_at = now()->addMinutes($this->expiresInMinutes);
         $authorization->verification_code = $this->generateCode();
+        $authorization->expires_at = $authorization->setExpiration($this->getExpiresInMinutes());
         $this->setUuidToSession($this->generateUuid());
-        $authorization->save();
         return $this;
     }
 
@@ -123,24 +130,21 @@ abstract class AuthorizatorAction
     /**
      * Deliver message to user
      *
-     * @param string $channel - set channel by which code should be sent to user
+     * @param \Tzm\Authorizator\Authorization $authorization
      * @return void
      * @throws AuthorizatorException
      */
-    public static function deliverCodeToUser(string $channel) :void
+    public static function deliverCodeToUser(Authorization $authorization) :void
     {
         /** @var Authorization $authorization */
         /** @var Channel $channel */
         /** @var self $action */
-        $authorization = Authorization::getAuthorization();
 
-        app()->make(new static())->verifyChannel($authorization);
-
-        $authorization->setChannel($channel);
+        (new static())->verifyChannel($authorization);
 
         $channel = app()->make($authorization->sent_via);
-        $user = self::getUser($authorization);
-        $channel->sendMessage($user, $authorization->verification_code);
+
+        $channel->sendMessage(self::getUser($authorization), $authorization->verification_code);
 
         $authorization->setSentAt();
     }
