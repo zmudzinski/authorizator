@@ -42,9 +42,10 @@ abstract class AuthorizatorAction
     /**
      * Action executing after succeed verification
      *
+     * @param \Tzm\Authorizator\Authorization $authorization
      * @return mixed
      */
-    abstract public function afterAuthorization();
+    abstract public function afterAuthorization(Authorization $authorization);
 
     /**
      * Getter for $expiresInMinutes
