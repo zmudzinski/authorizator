@@ -5,8 +5,8 @@ namespace Tzm\Authorizator;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Tzm\Authorizator\Authorization;
-use Tzm\Authorizator\Exceptions\AuthorizatorException;
 use Tzm\Authorizator\AuthorizatorAction;
+use Tzm\Authorizator\Exceptions\AuthorizatorException;
 
 class AuthorizationController extends Controller
 {
@@ -50,6 +50,10 @@ class AuthorizationController extends Controller
             $authorization = Authorization::getAuthorization($request->get('uuid'));
 
             $service = app()->make($authorization->class);
+
+            if(!$service instanceof AuthorizatorAction){
+                throw new \Exception(sprintf('Service %s must extends %s abstract class', get_class($service), AuthorizatorAction::class));
+            }
 
             $authorization->setExpiration($service->getExpiresInMinutes()); // Update expiration time for code
 
