@@ -51,7 +51,7 @@ class AuthorizationController extends Controller
 
             $service = app()->make($authorization->class);
 
-            if(!$service instanceof AuthorizatorAction){
+            if (!$service instanceof AuthorizatorAction) {
                 throw new \Exception(sprintf('Service %s must extends %s abstract class', get_class($service), AuthorizatorAction::class));
             }
 
@@ -62,6 +62,8 @@ class AuthorizationController extends Controller
             $service->deliverCodeToUser($authorization);
 
             return response(['status' => 'ok']);
+        } catch (AuthorizatorException $e) {
+            return response(['status' => 'error', 'message' => __($e->getMessage())]);
         } catch (\Exception $e) {
             logger($e);
             return response(['status' => 'error', 'message' => __('Error occurred while sending code')]);
