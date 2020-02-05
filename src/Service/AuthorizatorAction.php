@@ -101,7 +101,7 @@ abstract class AuthorizatorAction
         $authorization->class = get_called_class();
         $authorization->uuid = $this->generateUuid();
         $authorization->verification_code = $this->generateCode();
-        $authorization->expires_at = $authorization->setExpiration($this->getExpiresInMinutes());
+        $authorization->setExpiration($this->getExpiresInMinutes());
         $this->setUuidToSession($this->generateUuid());
         return $this;
     }
