@@ -66,7 +66,7 @@ class AuthorizationController extends Controller
             return response(['status' => 'error', 'message' => __($e->getMessage())]);
         } catch (\Exception $e) {
             logger($e);
-            return response(['status' => 'error', 'message' => __('Error occurred while sending code')]);
+            return response(['status' => 'error', 'message' => __('Error occurred while sending code. Try refresh the page.')]);
         }
     }
 
