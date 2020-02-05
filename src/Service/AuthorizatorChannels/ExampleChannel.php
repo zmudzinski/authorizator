@@ -14,7 +14,7 @@ class ExampleChannel extends Channel
      *
      * @return mixed
      */
-    public function getChannelDescription()
+    public function getChannelDescription() : string
     {
         return 'Send code by email';
     }
@@ -25,7 +25,7 @@ class ExampleChannel extends Channel
      *
      * @return mixed
      */
-    public function getChannelName()
+    public function getChannelName() : string
     {
         return 'E-mail';
     }

@@ -5,6 +5,7 @@ namespace Tzm\Authorizator;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Tzm\Authorizator\Authorization;
+use Tzm\Authorizator\AuthorizatorAction;
 use Tzm\Authorizator\Exceptions\AuthorizatorException;
 
 class AuthorizationController extends Controller
@@ -42,16 +43,30 @@ class AuthorizationController extends Controller
     {
         try {
             /** @var Authorization $authorization */
+            /** @var AuthorizatorAction $service */
+
             $channel = $request->input('channel');
 
-            $authorization = Authorization::retrieveFromSession();
+            $authorization = Authorization::getAuthorization($request->get('uuid'));
+
+            $service = app()->make($authorization->class);
+
+            if (!$service instanceof AuthorizatorAction) {
+                throw new \Exception(sprintf('Service %s must extends %s abstract class', get_class($service), AuthorizatorAction::class));
+            }
+
+            $authorization->setExpiration($service->getExpiresInMinutes()); // Update expiration time for code
+
             $authorization->setChannel($channel);
 
-            AuthorizatorAction::deliverCodeToUser($channel);
+            $service->deliverCodeToUser($authorization);
+
             return response(['status' => 'ok']);
+        } catch (AuthorizatorException $e) {
+            return response(['status' => 'error', 'message' => __($e->getMessage())]);
         } catch (\Exception $e) {
             logger($e);
-            return response(['status' => 'error', 'message' => __('Error occurred while sending code')]);
+            return response(['status' => 'error', 'message' => __('Error occurred while sending code. Try refresh the page.')]);
         }
     }
 
@@ -68,17 +83,16 @@ class AuthorizationController extends Controller
             /** @var Authorization $authorization */
             /** @var AuthorizatorAction $service */
             $code = $request->get('code');
-            $uuid = $request->get('uuid') ?? Authorization::retrieveUuidFromSession();
 
-            $authorization = Authorization::retrieveByUuid($uuid);
+            $authorization = Authorization::getAuthorization($request->get('uuid'));
 
             if (!$authorization) {
-                return response(['status' => 'invalid', 'message' => __('No authorization found')]);
+                return response(['status' => 'invalid', 'message' => __('Code invalid or expired')]);
             }
 
             $service = app()->make($authorization->class);
 
-            $service->verifyCode($code, $authorization, $uuid);
+            $service->verifyCode($code, $authorization);
             $service->afterAuthorization();
             $authorization->markAsVerified();
             return response([
@@ -89,7 +103,7 @@ class AuthorizationController extends Controller
             return response(['status' => 'invalid', 'message' => __($e->getMessage())]);
         } catch (\Exception $e) {
             logger($e);
-            return response(['status' => 'error', 'message' => __('Error occurred while checking code')]);
+            return response(['status' => 'error', 'message' => __('Error occurred while checking code. Try refresh the page')]);
         }
     }
 

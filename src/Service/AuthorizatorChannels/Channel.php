@@ -5,7 +5,7 @@ namespace Tzm\Authorizator\Service\AuthorizatorChannels;
 
 abstract class Channel
 {
-    public function getClassName()
+    public function getClassName(): string
     {
         return get_called_class();
     }
@@ -16,7 +16,7 @@ abstract class Channel
      *
      * @return mixed
      */
-    abstract public function getChannelDescription();
+    abstract public function getChannelDescription(): string;
 
     /**
      * String displayed in form if there is only one channel set in the action.
@@ -24,7 +24,7 @@ abstract class Channel
      *
      * @return mixed
      */
-    abstract public function getChannelName();
+    abstract public function getChannelName(): string;
 
     /**
      * This method sends code to user

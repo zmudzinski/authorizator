@@ -43,6 +43,18 @@ class Authorization extends Model
     }
 
     /**
+     * Set expiration date time
+     *
+     * @param int $minutes
+     * @return void
+     */
+    public function setExpiration(int $minutes) :void
+    {
+        $this->expires_at = now()->addMinutes($minutes);
+        $this->save();
+    }
+
+    /**
      * Scope a query to only not used codes.
      *
      * @param $query
@@ -104,34 +116,14 @@ class Authorization extends Model
     }
 
     /**
-     * Retrieve uuid from session
+     * Get auth by given uuid or from session
      *
-     * @return \Illuminate\Session\SessionManager|\Illuminate\Session\Store|mixed
+     * @param string|null $uuid
+     * @return static
      */
-    public static function retrieveUuidFromSession()
+    public static function getAuthorization(string $uuid = null)
     {
-        return session(Authorization::SESSION_UUID_NAME);
-    }
-
-    /**
-     * Find model by given session uuid
-     *
-     * @param $uuid
-     * @return mixed
-     */
-    public static function retrieveByUuid($uuid)
-    {
-        return self::whereUuid($uuid)->first();
-    }
-
-    /**
-     * Find model by session uuid
-     *
-     * @return mixed
-     */
-    public static function retrieveFromSession()
-    {
-        $uuid = self::retrieveUuidFromSession();
+        $uuid = $uuid ?? session(Authorization::SESSION_UUID_NAME);
         return self::whereUuid($uuid)->first();
     }
 

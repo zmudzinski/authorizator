@@ -5,9 +5,7 @@ namespace Tzm\Authorizator;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use Tzm\Authorizator\Exceptions\AuthorizatorException;
-use Tzm\Authorizator\Service\AuthorizatorChannels\Channel;
-
+use Tzm\Authorizator\{Exceptions\AuthorizatorException, Service\AuthorizatorChannels\Channel, Authorization};
 
 abstract class AuthorizatorAction
 {
@@ -49,12 +47,22 @@ abstract class AuthorizatorAction
     abstract public function afterAuthorization();
 
     /**
+     * Getter for $expiresInMinutes
+     *
+     * @return int
+     */
+    public function getExpiresInMinutes() : int
+    {
+        return $this->expiresInMinutes;
+    }
+
+    /**
      * Get allowed channels for Vue component
      * @return array
      * @throws BindingResolutionException
      * @throws \Exception
      */
-    protected function getAllowedChannels()
+    protected function getAllowedChannels() :array
     {
         $channels = [];
         foreach ($this->allowedChannels as $channel) {
@@ -76,7 +84,7 @@ abstract class AuthorizatorAction
      *
      * @return static
      */
-    public static function createAuth()
+    public static function createAuth() :self
     {
         return (new static())->createAuthorization();
     }
@@ -86,16 +94,15 @@ abstract class AuthorizatorAction
      *
      * @return self
      */
-    public function createAuthorization()
+    public function createAuthorization() : self
     {
         $authorization = new Authorization;
         $authorization->user_id = Auth::user()->id;
         $authorization->class = get_called_class();
-        $authorization->uuid = $this->getUuid();
-        $authorization->expires_at = now()->addMinutes($this->expiresInMinutes);
+        $authorization->uuid = $this->generateUuid();
         $authorization->verification_code = $this->generateCode();
-        $this->setUuidToSession($this->getUuid());
-        $authorization->save();
+        $authorization->setExpiration($this->getExpiresInMinutes());
+        $this->setUuidToSession($this->generateUuid());
         return $this;
     }
 
@@ -104,7 +111,7 @@ abstract class AuthorizatorAction
      *
      * @return int
      */
-    protected function generateCode()
+    protected function generateCode() :int
     {
         return rand(100000, 999999);
     }
@@ -123,20 +130,21 @@ abstract class AuthorizatorAction
     /**
      * Deliver message to user
      *
-     * @param string $channel - set channel by which code should be sent to user
+     * @param \Tzm\Authorizator\Authorization $authorization
      * @return void
-     * @throws BindingResolutionException
+     * @throws AuthorizatorException
      */
-    public static function deliverCodeToUser($channel)
+    public static function deliverCodeToUser(Authorization $authorization) :void
     {
         /** @var Authorization $authorization */
         /** @var Channel $channel */
-        $authorization = Authorization::retrieveFromSession();
-        $authorization->setChannel($channel);
+        /** @var self $action */
+
+        (new static())->verifyChannel($authorization);
 
         $channel = app()->make($authorization->sent_via);
-        $user = self::getUser($authorization);
-        $channel->sendMessage($user, $authorization->verification_code);
+
+        $channel->sendMessage(self::getUser($authorization), $authorization->verification_code);
 
         $authorization->setSentAt();
     }
@@ -146,7 +154,7 @@ abstract class AuthorizatorAction
      *
      * @return string
      */
-    protected function getUuid()
+    protected function generateUuid(): string
     {
         if (!$this->uuid) {
             $this->uuid = Str::uuid()->toString();
@@ -160,7 +168,7 @@ abstract class AuthorizatorAction
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      * @throws \Exception
      */
-    public function returnView()
+    public function returnView() : \Illuminate\View\View
     {
         return view('authorizator::authorizator-form')->with([
             'allowedChannels' => $this->getAllowedChannels(),
@@ -172,27 +180,32 @@ abstract class AuthorizatorAction
      *
      * @param $code
      * @param Authorization $authorization
-     * @param string $uuid
      * @return bool
      * @throws AuthorizatorException
      */
-    public function verifyCode($code, $authorization = null, $uuid = null): bool
+    public function verifyCode(string $code, Authorization $authorization): bool
     {
-        $uuid = $uuid ?? session(Authorization::SESSION_UUID_NAME);
-        $authorization = $authorization ?? Authorization::whereUuid($uuid)->first();
         if ($authorization->verification_code !== $code) {
             throw new AuthorizatorException('Code invalid');
-        }
-        if ($authorization->uuid !== $uuid) {
-            throw new AuthorizatorException('Code uuid invalid');
         }
         if (Auth::user()->id !== $authorization->user_id) {
             throw new AuthorizatorException('User invalid. Try again');
         }
-        if (!in_array($authorization->sent_via, $this->allowedChannels)) {
-            throw new AuthorizatorException('Delivery channel code invalid');
-        }
+        $this->verifyChannel($authorization);
         return true;
+    }
+
+    /**
+     * Verify is given channel allowed for this action
+     *
+     * @param $authorization
+     * @throws AuthorizatorException
+     */
+    public function verifyChannel($authorization)
+    {
+        if (!in_array($authorization->sent_via, $this->allowedChannels)) {
+            throw new AuthorizatorException('Delivery channel not allowed');
+        }
     }
 
     /**
@@ -200,7 +213,7 @@ abstract class AuthorizatorAction
      *
      * @return \Illuminate\Contracts\Routing\UrlGenerator|string
      */
-    public function returnUrl()
+    public function returnUrl(): string
     {
         return url(route($this->returnRoute));
     }
