@@ -42,12 +42,17 @@ class AuthorizationController extends Controller
     {
         try {
             /** @var Authorization $authorization */
+            /** @var AuthorizatorAction $service */
             $channel = $request->input('channel');
 
-            $authorization = Authorization::retrieveFromSession();
+            $authorization = Authorization::getAuthorization($request->get('uuid'));
+
             $authorization->setChannel($channel);
 
-            AuthorizatorAction::deliverCodeToUser($channel);
+            $service = app()->make($authorization->class);
+
+            $service->deliverCodeToUser($channel);
+
             return response(['status' => 'ok']);
         } catch (\Exception $e) {
             logger($e);
@@ -68,17 +73,16 @@ class AuthorizationController extends Controller
             /** @var Authorization $authorization */
             /** @var AuthorizatorAction $service */
             $code = $request->get('code');
-            $uuid = $request->get('uuid') ?? Authorization::retrieveUuidFromSession();
 
-            $authorization = Authorization::retrieveByUuid($uuid);
+            $authorization = Authorization::getAuthorization($request->get('uuid'));
 
             if (!$authorization) {
-                return response(['status' => 'invalid', 'message' => __('No authorization found')]);
+                return response(['status' => 'invalid', 'message' => __('Code invalid or expired')]);
             }
 
             $service = app()->make($authorization->class);
 
-            $service->verifyCode($code, $authorization, $uuid);
+            $service->verifyCode($code, $authorization);
             $service->afterAuthorization();
             $authorization->markAsVerified();
             return response([
