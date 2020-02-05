@@ -103,7 +103,7 @@ class AuthorizationController extends Controller
             return response(['status' => 'invalid', 'message' => __($e->getMessage())]);
         } catch (\Exception $e) {
             logger($e);
-            return response(['status' => 'error', 'message' => __('Error occurred while checking code')]);
+            return response(['status' => 'error', 'message' => __('Error occurred while checking code. Try refresh the page')]);
         }
     }
 
