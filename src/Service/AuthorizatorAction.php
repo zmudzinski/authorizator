@@ -58,6 +58,16 @@ abstract class AuthorizatorAction
     }
 
     /**
+     * Getter for $expiresInMinutes
+     *
+     * @return int
+     */
+    public function getExpiresInMinutes() : int
+    {
+        return $this->expiresInMinutes;
+    }
+
+    /**
      * Get allowed channels for Vue component
      * @return array
      * @throws BindingResolutionException

@@ -93,7 +93,9 @@ class AuthorizationController extends Controller
             $service = app()->make($authorization->class);
 
             $service->verifyCode($code, $authorization);
+
             $service->afterAuthorization($authorization);
+
             $authorization->markAsVerified();
             return response([
                 'status' => 'valid',
