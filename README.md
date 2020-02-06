@@ -1,4 +1,9 @@
 # Authorizator
+![stable](https://img.shields.io/github/v/tag/zmudzinski/authorizator?label=stable&style=flat-square)
+![PHP from Packagist](https://img.shields.io/packagist/php-v/laravel/laravel?style=flat-square)
+![Laravel version](https://img.shields.io/badge/Laravel->%3D5.8-red?style=flat-square)
+![GitHub issues](https://img.shields.io/github/issues/zmudzinski/authorizator?style=flat-square)
+
 This is an easy to use, powerful and extendable Laravel package for the authorization of user actions via custom channels. It works by delivering an authorization code to the user (for e.g. via sms or e-mail) and then verifing it. 
 
 You can configure as many channels as you want. Each action can provide any channel configuration.

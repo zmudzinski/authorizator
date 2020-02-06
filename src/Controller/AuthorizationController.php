@@ -64,7 +64,7 @@ class AuthorizationController extends Controller
             return response(['status' => 'ok']);
         } catch (AuthorizatorException $e) {
             return response(['status' => 'error', 'message' => __($e->getMessage())]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             logger($e);
             return response(['status' => 'error', 'message' => __('Error occurred while sending code. Try refresh the page.')]);
         }
@@ -105,7 +105,7 @@ class AuthorizationController extends Controller
             ]);
         } catch (AuthorizatorException $e) {
             return response(['status' => 'invalid', 'message' => __($e->getMessage())]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             logger($e);
             return response(['status' => 'error', 'message' => __('Error occurred while checking code. Try refresh the page')]);
         }
