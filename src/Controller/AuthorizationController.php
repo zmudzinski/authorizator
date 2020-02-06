@@ -94,7 +94,9 @@ class AuthorizationController extends Controller
 
             $service->verifyCode($code, $authorization);
 
-            $service->afterAuthorization($authorization);
+            $service->setAuthorizationModel($authorization);
+
+            $service->afterAuthorization();
 
             $authorization->markAsVerified();
             return response([

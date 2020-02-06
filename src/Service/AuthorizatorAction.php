@@ -38,14 +38,17 @@ abstract class AuthorizatorAction
      * @var int
      */
     protected $expiresInMinutes = 60;
+    /**
+     * @var \Tzm\Authorizator\Authorization
+     */
+    protected $authorization;
 
     /**
      * Action executing after succeed verification
      *
-     * @param \Tzm\Authorizator\Authorization $authorization
      * @return mixed
      */
-    abstract public function afterAuthorization(Authorization $authorization);
+    abstract public function afterAuthorization();
 
     /**
      * Getter for $expiresInMinutes
@@ -55,6 +58,18 @@ abstract class AuthorizatorAction
     public function getExpiresInMinutes() : int
     {
         return $this->expiresInMinutes;
+    }
+
+    /**
+     * Set Authorization model
+     *
+     * @param \Tzm\Authorizator\Authorization $authorization
+     * @return $this
+     */
+    public function setAuthorizationModel(Authorization $authorization)
+    {
+        $this->authorization = $authorization;
+        return $this;
     }
 
     /**

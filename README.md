@@ -127,7 +127,7 @@ This class requires two methods:
 ### Create an authorization action
 Afterwards you have to create a new class that inherits `Tzm\Authorizator\AuthorizatorAction`. It handles an action that requires authorization. 
 
-Class must declare method `afterAuthorization()`. This method will be called after successful authorization f.ex. a money transfer will be executed. Finally you have to define `$allowedChannels` array contains name of code delivery channel classes that will be assign to this action f.ex.:
+Class must declare method `afterAuthorization()`. This method will be called after successful authorization f.ex. a money transfer will be executed. By `$this->authorizarion` you can access to your `Authorization` model. Finally you have to define `$allowedChannels` array contains name of code delivery channel classes that will be assign to this action f.ex.:
 ```php
 protected $allowedChannels = [
     EmailChannel::class,
