@@ -2,6 +2,7 @@
     "name": "tzm/authorizator",
     "description": "This is an easy to use, powerful and extendable Laravel package for authorization user actions via custom channels.",
     "type": "library",
+    "keywords": ["laravel", "authorizator", "2fa", "verification", "authorization"],
     "homepage": "https://github.com/zmudzinski/authorizator",
     "require": {
         "php": "^7.2",

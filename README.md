@@ -52,7 +52,9 @@ To learn how to configure the package go to [How to use](#how-to-use) section
 
 ## How it works
 Flow of package is presented on image below:
+
 ![flowchart](.images/flowchart.png)
+
 1. If action that needs additional authorization occurs, the form is displayed. **User must be logged in**.
 2. User chooses the channel (each action can have own channels, by default you can use one or 
 as many channels as you want.
