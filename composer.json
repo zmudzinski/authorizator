@@ -1,5 +1,5 @@
 {
-    "name": "tzmudz/authorizator",
+    "name": "tzm/authorizator",
     "description": "This is an easy to use, powerful and extendable Laravel package for authorization user actions via custom channels.",
     "type": "library",
     "homepage": "https://github.com/zmudzinski/authorizator",
