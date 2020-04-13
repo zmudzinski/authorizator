@@ -46,7 +46,7 @@ Examples of use:
 ## Installation
 Add package by composer 
 
-`composer require tzmudz/authorizator`
+`composer require tzm/authorizator`
 
 To learn how to configure the package go to [How to use](#how-to-use) section
 
@@ -105,7 +105,7 @@ _Out of the box this package uses vue component as default but if you don't wont
 To use vue component that handles authorization, declare in `app.js` package's `.vue` file:
 
 ```js
-Vue.component('authorizator-form', require('../../vendor/tzmudz/authorizator/src/resources/js/components/AuthorizatorForm').default);
+Vue.component('authorizator-form', require('../../vendor/tzm/authorizator/src/resources/js/components/AuthorizatorForm').default);
 ```
 
 Don't forget to run `npm run watch` to generate assets!
