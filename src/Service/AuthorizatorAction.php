@@ -126,6 +126,7 @@ abstract class AuthorizatorAction
         $authorization->verification_code = $this->generateCode();
         $authorization->setExpiration($this->getExpiresInMinutes());
         $this->setUuidToSession($this->generateUuid());
+        $this->setAuthorizationModel($authorization);
         return $this;
     }
 
@@ -173,6 +174,19 @@ abstract class AuthorizatorAction
     }
 
     /**
+     * Send code to user directly from this instance
+     * @param $channel
+     * @return AuthorizatorAction
+     * @throws AuthorizatorException
+     */
+    public function sendCode($channel)
+    {
+        $this->authorization->setChannel($channel);
+        self::deliverCodeToUser($this->authorization);
+        return $this;
+    }
+
+    /**
      * Get the Uuid
      *
      * @return string
@@ -201,7 +215,7 @@ abstract class AuthorizatorAction
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      * @throws \Exception
      */
-    public function returnView(): \Illuminate\View\View
+    protected function returnView(): \Illuminate\View\View
     {
         return view('authorizator::authorizator-form')->with([
             'allowedChannels' => $this->getAllowedChannels(),

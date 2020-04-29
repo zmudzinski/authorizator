@@ -200,6 +200,17 @@ In the public controller's method`create()` the `Transaction::createAuth()` meth
 Now user can see the form and choose the authorization code deliver channel. After validation the method `afterAuthorization()` form `Transaction` class is executed.
 
 Working example is available here: https://github.com/zmudzinski/authorizator-example
+
+### Send code immediately
+If you would like to create an authorization and send code immediately (e.g. controller) you can use `sendCode()` method from `AuthorizatorAction` class. 
+
+E.g.:
+
+```php 
+VerifyPhoneAction::createAuth()->sendCode(SmsChannel::class)
+```
+
+This will create authorization and deliver the code by given channel (in ths case `SmsChannel`)
  
 ## Customization
 All elements of this package are customizable. 
