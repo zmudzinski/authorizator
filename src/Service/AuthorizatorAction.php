@@ -33,6 +33,13 @@ abstract class AuthorizatorAction
     protected $allowedChannels = [];
 
     /**
+     * Determinate if view should be returned after authorization created. Instead HTTP code will be returned.
+     *
+     * @var string
+     */
+    protected $shouldReturnView = true;
+
+    /**
      * Time after which the code expires
      *
      * @var int
@@ -55,7 +62,7 @@ abstract class AuthorizatorAction
      *
      * @return int
      */
-    public function getExpiresInMinutes() : int
+    public function getExpiresInMinutes(): int
     {
         return $this->expiresInMinutes;
     }
@@ -78,7 +85,7 @@ abstract class AuthorizatorAction
      * @throws BindingResolutionException
      * @throws \Exception
      */
-    protected function getAllowedChannels() :array
+    protected function getAllowedChannels(): array
     {
         $channels = [];
         foreach ($this->allowedChannels as $channel) {
@@ -88,8 +95,8 @@ abstract class AuthorizatorAction
             }
             $channels[] = [
                 'description' => $channelInstance->getChannelDescription(),
-                'name' => $channelInstance->getChannelName(),
-                'class' => $channelInstance->getClassName(),
+                'name'        => $channelInstance->getChannelName(),
+                'class'       => $channelInstance->getClassName(),
             ];
         }
         return $channels;
@@ -100,7 +107,7 @@ abstract class AuthorizatorAction
      *
      * @return static
      */
-    public static function createAuth() :self
+    public static function createAuth(): self
     {
         return (new static())->createAuthorization();
     }
@@ -110,7 +117,7 @@ abstract class AuthorizatorAction
      *
      * @return self
      */
-    public function createAuthorization() : self
+    public function createAuthorization(): self
     {
         $authorization = new Authorization;
         $authorization->user_id = Auth::user()->id;
@@ -127,7 +134,7 @@ abstract class AuthorizatorAction
      *
      * @return int
      */
-    protected function generateCode() :int
+    protected function generateCode(): int
     {
         return rand(100000, 999999);
     }
@@ -150,7 +157,7 @@ abstract class AuthorizatorAction
      * @return void
      * @throws AuthorizatorException
      */
-    public static function deliverCodeToUser(Authorization $authorization) :void
+    public static function deliverCodeToUser(Authorization $authorization): void
     {
         /** @var Authorization $authorization */
         /** @var Channel $channel */
@@ -179,12 +186,22 @@ abstract class AuthorizatorAction
     }
 
     /**
+     * Return view or response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @throws \Exception
+     */
+    public function response()
+    {
+        return $this->shouldReturnView ? $this->returnView() : response(null, 201);
+    }
+
+    /**
      * Return the form view
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      * @throws \Exception
      */
-    public function returnView() : \Illuminate\View\View
+    public function returnView(): \Illuminate\View\View
     {
         return view('authorizator::authorizator-form')->with([
             'allowedChannels' => $this->getAllowedChannels(),

@@ -32,7 +32,7 @@ class AuthorizationController extends Controller
             throw new \Exception(sprintf('Service %s must extends %s abstract class', get_class($service), AuthorizatorAction::class));
         }
 
-        return $service->createAuthorization()->returnView();
+        return $service->createAuthorization()->response();
     }
 
     /**

@@ -36,6 +36,7 @@ Examples of use:
     * [Migration](#migrations)
     * [Routing](#routing)
     * [Blade View](#blade-view)
+    * [Return HTTP code instead of Blade View](#return-http-code-instead-of-blade-view)
     * [vue component](#vue-component)
     * [Localization](#localization)
 * [Delete expired codes](#delete-expired-codes)
@@ -246,7 +247,10 @@ Default Blade view is in `resource\views` folder. You have to publish this view 
  ```bash
 php artisan vendor:publish --tag=authorizator.views
 ```
- Blade view is using default Bootstrap framework. 
+Blade view is using default Bootstrap framework. 
+ 
+### Return HTTP code instead of Blade View
+Sometimes you need to return only HTTP response code instead of blade view (e.g. if you are use endpoints to generate authorization). To do so, add property `$shouldReturnView` to you Action and set to `false`. This will return HTTP response with code `201` instead of blade view. 
 
 ### vue component
 Vue component is used in Blade view. It is responsible for handling whole authorization. You can use your own vue component. Use: 
