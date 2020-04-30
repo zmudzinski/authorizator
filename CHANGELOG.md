@@ -1,8 +1,12 @@
 # Release Notes
 
+## v1.0.4
+### Added
+- Method: `AuthorizationAction::getAuthorizationModel()` to retrieve Authorization from Action
+
 ## v1.0.3
 ### Added
-- `AuthorizationAction::sendCode` to send directly code from controller
+- `AuthorizationAction::sendCode()` to send directly code from controller
 
 ## v1.0.2
 ### Added

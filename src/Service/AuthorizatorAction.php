@@ -80,6 +80,15 @@ abstract class AuthorizatorAction
     }
 
     /**
+     * Get Authorizatiom model
+     * @return \Tzm\Authorizator\Authorization
+     */
+    public function getAuthorizationModel()
+    {
+        return $this->authorization;
+    }
+
+    /**
      * Get allowed channels for Vue component
      * @return array
      * @throws BindingResolutionException
