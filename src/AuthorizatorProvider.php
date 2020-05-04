@@ -15,7 +15,7 @@ class AuthorizatorProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->make('Tzm\Authorizator\AuthorizationController');
+        $this->app->make('Tzm\Authorizator\Controller\AuthorizationController');
     }
 
     /**
