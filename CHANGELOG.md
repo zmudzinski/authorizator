@@ -1,5 +1,9 @@
 # Release Notes
 
+## v1.0.5
+### Fixed
+- Namespaces for PSR-4
+
 ## v1.0.4
 ### Added
 - Method: `AuthorizationAction::getAuthorizationModel()` to retrieve Authorization from Action

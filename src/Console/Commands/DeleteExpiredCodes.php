@@ -37,7 +37,7 @@ class DeleteExpiredCodes extends Command
      */
     public function handle()
     {
-        $deleted = \Tzm\Authorizator\Authorization::withoutGlobalScopes()->where('expires_at', '<', now())->delete();
+        $deleted = \Tzm\Authorizator\Model\Authorization::withoutGlobalScopes()->where('expires_at', '<', now())->delete();
         $this->info("{$deleted} expired code(s) deleted");
     }
 }

@@ -66,12 +66,12 @@ as many channels as you want.
 ### How it works in details
 To understand package workflow let's get deeper into details. 
 
-There are two types of classes that need to provide `Tzm\Authorizator\AuthorizatorAction` and `Tzm\Authorizator\Service\AuthorizatorChannels\Channel`. Both are abstract, which means that you have to inherit them in your implementation. First one is responsible for handling the given action of authorization. In this class you will set the action that will be executed after successful verification of the authorization code. This class also has the information about the return path after validation, code time expiration and allowed channels. The second one provides code delivery channel like e-mail, SMS, etc. It contains a method that delivers the authorization code to the user . 
+There are two types of classes that need to provide `Tzm\Authorizator\Service\AuthorizatorAction` and `Tzm\Authorizator\Service\AuthorizatorChannels\Channel`. Both are abstract, which means that you have to inherit them in your implementation. First one is responsible for handling the given action of authorization. In this class you will set the action that will be executed after successful verification of the authorization code. This class also has the information about the return path after validation, code time expiration and allowed channels. The second one provides code delivery channel like e-mail, SMS, etc. It contains a method that delivers the authorization code to the user . 
 
-Out of the box this package comes with vue component. This component has all forms and methods. There are two endpoints: `authorization/send` and `authorization/check` (both use `POST` method). These endpoints are in `Tzm\Authorizator\AuthorizationController`. There is also `authorization/create` endpoint but this we will discussed later. 
+Out of the box this package comes with vue component. This component has all forms and methods. There are two endpoints: `authorization/send` and `authorization/check` (both use `POST` method). These endpoints are in `Tzm\Authorizator\Controller\AuthorizationController`. There is also `authorization/create` endpoint but this we will discussed later. 
 
 In the Controller in which authorization is requested (or any other place like middleware etc.) new authorization in database is created. This happens by executing static method `Transaction::createAuth()`.
- The `Transaction` object extends `Tzm\Authorizator\AuthorizatorAction` class. Also new variable is stored in user session (with default name `_authorizator_uuid` and contains `uuid` form database). Next by `returnView()` method the view is returned to user. So, simply the Controller will look like:
+ The `Transaction` object extends `Tzm\Authorizator\Service\AuthorizatorAction` class. Also new variable is stored in user session (with default name `_authorizator_uuid` and contains `uuid` form database). Next by `returnView()` method the view is returned to user. So, simply the Controller will look like:
 ```php
 use App\Services\AuthorizationActions\Transaction;
 
@@ -84,13 +84,13 @@ class TransactionController extends Controller
 }
 ```
 
-**Notice:** `Transaction` class inherit `Tzm\Authorizator\AuthorizatorAction`.
+**Notice:** `Transaction` class inherit `Tzm\Authorizator\Service\AuthorizatorAction`.
 
 In the vue component user chooses delivery channel (if there is more than one). Request is sent to `authorization/send` endpoint by `POST` method.  
 
 Next, code is delivered to the user, by a method `sendMessage()` from inherited class of `Tzm\Authorizator\Service\AuthorizatorChannel\Channel`. This is done by `authorization/send` endpoint.
 
-User enters this code into form. If code is valid (`authorization/check` endpoint), it is set in database as used (column `verified_at` is set to current time). Finally the `afterAuthorization()` from inherited `Tzm\Authorizator\AuthorizatorAction` class is executed. This is the most important action in this package. In this method you write the code that will be run after successful validation of the code. 
+User enters this code into form. If code is valid (`authorization/check` endpoint), it is set in database as used (column `verified_at` is set to current time). Finally the `afterAuthorization()` from inherited `Tzm\Authorizator\Service\AuthorizatorAction` class is executed. This is the most important action in this package. In this method you write the code that will be run after successful validation of the code. 
 
 #### Create authorization by POST method
 If your application needs to create a new authorization code by `POST` method you can use `authorization/create` endpoint. 
@@ -133,7 +133,7 @@ This class requires two methods:
  Don't forget to run `composer dump-autoload`.
 
 ### Create an authorization action
-Afterwards you have to create a new class that inherits `Tzm\Authorizator\AuthorizatorAction`. It handles an action that requires authorization. 
+Afterwards you have to create a new class that inherits `Tzm\Authorizator\Service\AuthorizatorAction`. It handles an action that requires authorization. 
 
 Class must declare method `afterAuthorization()`. This method will be called after successful authorization f.ex. a money transfer will be executed. By `$this->authorizarion` you can access to your `Authorization` model. Finally you have to define `$allowedChannels` array contains name of code delivery channel classes that will be assign to this action f.ex.:
 ```php
@@ -193,7 +193,7 @@ class TransactionController extends Controller
 
 Let's analyze the code.
 
-`Transaction` extends `Tzm\Authorizator\AuthorizatorAction` class. 
+`Transaction` extends `Tzm\Authorizator\Service\AuthorizatorAction` class. 
 
 In the public controller's method`create()` the `Transaction::createAuth()` method is executed. This will insert data to database and set `uuid` in session. Next method, returns default Blade view by `returnView()`. That's all! 
 

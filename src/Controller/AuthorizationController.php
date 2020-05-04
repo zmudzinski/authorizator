@@ -1,11 +1,11 @@
 <?php
 
-namespace Tzm\Authorizator;
+namespace Tzm\Authorizator\Controller;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Tzm\Authorizator\Authorization;
-use Tzm\Authorizator\AuthorizatorAction;
+use Tzm\Authorizator\Model\Authorization;
+use Tzm\Authorizator\Service\AuthorizatorAction;
 use Tzm\Authorizator\Exceptions\AuthorizatorException;
 
 class AuthorizationController extends Controller

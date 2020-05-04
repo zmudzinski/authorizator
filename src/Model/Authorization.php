@@ -1,6 +1,6 @@
 <?php
 
-namespace Tzm\Authorizator;
+namespace Tzm\Authorizator\Model;
 
 use App\User;
 use Illuminate\Database\Eloquent\Model;

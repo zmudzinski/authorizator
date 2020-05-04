@@ -1,11 +1,11 @@
 <?php
 
-namespace Tzm\Authorizator;
+namespace Tzm\Authorizator\Service;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use Tzm\Authorizator\{Exceptions\AuthorizatorException, Service\AuthorizatorChannels\Channel, Authorization};
+use Tzm\Authorizator\{Exceptions\AuthorizatorException, Service\AuthorizatorChannels\Channel, Model\Authorization};
 
 abstract class AuthorizatorAction
 {
