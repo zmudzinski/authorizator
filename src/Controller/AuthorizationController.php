@@ -65,7 +65,7 @@ class AuthorizationController extends Controller
         } catch (AuthorizatorException $e) {
             return response(['status' => 'error', 'message' => __($e->getMessage())]);
         } catch (\Throwable $e) {
-            logger($e);
+            report($e);
             return response(['status' => 'error', 'message' => __('Error occurred while sending code. Try refresh the page.')]);
         }
     }

@@ -1,5 +1,9 @@
 # Release Notes
 
+## v1.0.6
+### Fixed
+- Parse to int user id in verifyCode()
+
 ## v1.0.5
 ### Fixed
 - Namespaces for PSR-4

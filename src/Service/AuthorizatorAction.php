@@ -244,7 +244,7 @@ abstract class AuthorizatorAction
         if ($authorization->verification_code !== $code) {
             throw new AuthorizatorException('Code invalid');
         }
-        if (Auth::user()->id !== $authorization->user_id) {
+        if ((int)Auth::user()->id !== (int)$authorization->user_id) {
             throw new AuthorizatorException('User invalid. Try again');
         }
         $this->verifyChannel($authorization);
