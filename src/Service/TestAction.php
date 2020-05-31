@@ -4,13 +4,13 @@
 namespace Tzm\Authorizator\Service;
 
 
-use Tzm\Authorizator\Service\AuthorizatorChannels\ExampleChannel;
+use Tzm\Authorizator\Service\AuthorizatorChannels\TestChannel;
 
-class ExampleAction extends AuthorizatorAction
+class TestAction extends AuthorizatorAction
 {
 
     protected $allowedChannels = [
-        ExampleChannel::class,
+        TestChannel::class,
     ];
 
     public function afterAuthorization()

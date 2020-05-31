@@ -1,0 +1,18 @@
+<?php
+
+namespace {{ namespace }};
+
+use Tzm\Authorizator\Service\AuthorizatorChannels\TestChannel;
+
+class {{ class }} extends AuthorizatorAction
+{
+
+    protected $allowedChannels = [
+        //TODO: Add some allowed channels
+    ];
+
+    public function afterAuthorization()
+    {
+        // TODO: Add after authorization action
+    }
+}

@@ -4,7 +4,7 @@ namespace Tzm\Authorizator\Service\AuthorizatorChannels;
 
 use Tzm\Authorizator\Service\AuthorizatorChannels\Channel;
 
-class ExampleChannel extends Channel
+class TestChannel extends Channel
 {
 
     /**

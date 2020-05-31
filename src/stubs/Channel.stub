@@ -1,0 +1,17 @@
+<?php
+
+namespace {{ namespace }};
+
+
+class {{ class }} extends AuthorizatorAction
+{
+
+    protected $allowedChannels = [
+        //TODO: Add some allowed channels
+    ];
+
+    public function afterAuthorization()
+    {
+        // TODO: Add after authorization action
+    }
+}
