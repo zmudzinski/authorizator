@@ -2,16 +2,42 @@
 
 namespace {{ namespace }};
 
+use Tzm\Authorizator\Service\AuthorizatorChannels\Channel;
 
-class {{ class }} extends AuthorizatorAction
+class {{ class }} extends Channel
 {
 
-    protected $allowedChannels = [
-        //TODO: Add some allowed channels
-    ];
-
-    public function afterAuthorization()
+    /**
+     * String displayed on available channel list
+     * The preferred method to return a channel description is to use Laravel Localization
+     *
+     * @return mixed
+     */
+    public function getChannelDescription(): string
     {
-        // TODO: Add after authorization action
+        // TODO: Return a short description (e.g. Send code via SMS)
+    }
+
+    /**
+     * String displayed in form if there is only one channel set in the action.
+     * The preferred method to return a channel description is to use Laravel Localization
+     *
+     * @return mixed
+     */
+    public function getChannelName(): string
+    {
+        // TODO: Return a channel name (e.g. SMS)
+    }
+
+    /**
+     * This method sends code to user
+     *
+     * @param $user
+     * @param $code
+     * @return mixed
+     */
+    public function sendMessage($user, $code)
+    {
+        // TODO: Send code to user
     }
 }

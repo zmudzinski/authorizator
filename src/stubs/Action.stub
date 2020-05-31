@@ -2,15 +2,26 @@
 
 namespace {{ namespace }};
 
-use Tzm\Authorizator\Service\AuthorizatorChannels\TestChannel;
+use Tzm\Authorizator\Service\AuthorizatorAction;
 
 class {{ class }} extends AuthorizatorAction
 {
 
+    /**
+     * Allowed channels for sending verification code.
+     * Channels are verified with verification code in verifyCode() method.
+     *
+     * @var array
+     */
     protected $allowedChannels = [
         //TODO: Add some allowed channels
     ];
 
+    /**
+     * Action executing after succeed verification
+     *
+     * @return mixed
+     */
     public function afterAuthorization()
     {
         // TODO: Add after authorization action
