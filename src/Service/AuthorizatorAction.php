@@ -218,6 +218,18 @@ abstract class AuthorizatorAction
     }
 
     /**
+     * Set response type (independently of Action property)
+     *
+     * @param bool $shouldReturnView
+     * @return AuthorizatorAction
+     */
+    public function setResponseAsView(bool $shouldReturnView): self
+    {
+        $this->shouldReturnView = $shouldReturnView;
+        return $this;
+    }
+
+    /**
      * Return view or response
      * @return Application|ResponseFactory|Factory|Response|View
      * @throws Exception

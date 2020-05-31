@@ -30,6 +30,8 @@ class ControllerTests extends AuthorizatorTestCase
         $response = $this->post(route('authorizator.send', ['channel' => ExampleChannel::class]));
         $response->assertJsonFragment(['status' => 'ok']);
         $response->assertStatus(200);
+        $response->assertSessionHas('code');
+        $response->assertSessionHas('user_id', $this->user->id);
     }
 
     /** @test */

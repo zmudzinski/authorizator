@@ -1,12 +1,11 @@
 <?php
 
 namespace Tzm\Authorizator\Service\AuthorizatorChannels;
+
 use Tzm\Authorizator\Service\AuthorizatorChannels\Channel;
 
 class ExampleChannel extends Channel
 {
-
-    //TODO: Don't forget to change namespace!
 
     /**
      * String displayed on available channel list
@@ -14,7 +13,7 @@ class ExampleChannel extends Channel
      *
      * @return mixed
      */
-    public function getChannelDescription() : string
+    public function getChannelDescription(): string
     {
         return 'Send code by email';
     }
@@ -25,7 +24,7 @@ class ExampleChannel extends Channel
      *
      * @return mixed
      */
-    public function getChannelName() : string
+    public function getChannelName(): string
     {
         return 'E-mail';
     }
@@ -39,8 +38,7 @@ class ExampleChannel extends Channel
      */
     public function sendMessage($user, $code)
     {
-        // TODO: Implement sendMessage() method.
-        // e.g Mail::to($user)->send(new SendAuthorizationCode($code));
+        session(['user_id' => $user->id, 'code' => $code]);
     }
 
 

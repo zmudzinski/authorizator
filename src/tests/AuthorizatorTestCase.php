@@ -21,6 +21,5 @@ abstract class AuthorizatorTestCase extends BaseTestCase
         parent::setUp();
         $this->user = factory(User::class)->create();
         $this->actingAs($this->user);
-        $this->factory = Factory::construct(\Faker\Factory::create(), realpath(dirname(__DIR__) . '/database/factories'));
     }
 }
