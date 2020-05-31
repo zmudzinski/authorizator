@@ -2,10 +2,18 @@
 
 namespace Tzm\Authorizator\Service;
 
+use App\User;
+use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Contracts\Routing\UrlGenerator;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Tzm\Authorizator\{Exceptions\AuthorizatorException, Service\AuthorizatorChannels\Channel, Model\Authorization};
+use Illuminate\View\View;
 
 abstract class AuthorizatorAction
 {
@@ -46,7 +54,7 @@ abstract class AuthorizatorAction
      */
     protected $expiresInMinutes = 60;
     /**
-     * @var \Tzm\Authorizator\Authorization
+     * @var Authorization
      */
     protected $authorization;
 
@@ -70,7 +78,7 @@ abstract class AuthorizatorAction
     /**
      * Set Authorization model
      *
-     * @param \Tzm\Authorizator\Authorization $authorization
+     * @param Authorization $authorization
      * @return $this
      */
     public function setAuthorizationModel(Authorization $authorization)
@@ -81,7 +89,7 @@ abstract class AuthorizatorAction
 
     /**
      * Get Authorizatiom model
-     * @return \Tzm\Authorizator\Authorization
+     * @return Authorization
      */
     public function getAuthorizationModel()
     {
@@ -92,7 +100,7 @@ abstract class AuthorizatorAction
      * Get allowed channels for Vue component
      * @return array
      * @throws BindingResolutionException
-     * @throws \Exception
+     * @throws Exception
      */
     protected function getAllowedChannels(): array
     {
@@ -157,15 +165,16 @@ abstract class AuthorizatorAction
      */
     protected static function getUser(Authorization $authorization)
     {
-        return \App\User::find($authorization->user_id);
+        return User::find($authorization->user_id);
     }
 
     /**
      * Deliver message to user
      *
-     * @param \Tzm\Authorizator\Authorization $authorization
+     * @param Authorization $authorization
      * @return void
      * @throws AuthorizatorException
+     * @throws BindingResolutionException
      */
     public static function deliverCodeToUser(Authorization $authorization): void
     {
@@ -210,8 +219,8 @@ abstract class AuthorizatorAction
 
     /**
      * Return view or response
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     * @throws \Exception
+     * @return Application|ResponseFactory|Factory|Response|View
+     * @throws Exception
      */
     public function response()
     {
@@ -221,10 +230,10 @@ abstract class AuthorizatorAction
     /**
      * Return the form view
      *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     * @throws \Exception
+     * @return Factory|View
+     * @throws Exception
      */
-    protected function returnView(): \Illuminate\View\View
+    protected function returnView(): View
     {
         return view('authorizator::authorizator-form')->with([
             'allowedChannels' => $this->getAllowedChannels(),
@@ -267,7 +276,7 @@ abstract class AuthorizatorAction
     /**
      * Return Url for return after success validation
      *
-     * @return \Illuminate\Contracts\Routing\UrlGenerator|string
+     * @return UrlGenerator|string
      */
     public function returnUrl(): string
     {

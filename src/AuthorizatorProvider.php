@@ -2,7 +2,6 @@
 
 namespace Tzm\Authorizator;
 
-use App\Console\Commands\DeleteExpiredCodes;
 use Illuminate\Support\ServiceProvider;
 
 class AuthorizatorProvider extends ServiceProvider
@@ -26,7 +25,7 @@ class AuthorizatorProvider extends ServiceProvider
     public function boot()
     {
         $this->loadViewsFrom(__DIR__ . '/resources/views', 'authorizator');
-        $this->loadMigrationsFrom(__DIR__ . '/migrations');
+        $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
 
         $this->publishes([
@@ -36,7 +35,7 @@ class AuthorizatorProvider extends ServiceProvider
             __DIR__ . '/resources' => resource_path('js/vendor/authorizator'),
         ], 'authorizator.vue');
         $this->publishes([
-            __DIR__ . '/migrations/' => database_path('migrations')
+            __DIR__ . '/database/migrations/' => database_path('migrations')
         ], 'authorizator.migrations');
         $this->publishes([
             __DIR__ . '/routes.php' => base_path('routes/authorizator.php')
