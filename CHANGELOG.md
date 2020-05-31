@@ -1,5 +1,13 @@
 # Release Notes
 
+## v1.0.7
+### Added
+- Feature tests
+- Example Action for tests
+- Factory for Authorizator Model
+### Changed
+- Location of database migration
+
 ## v1.0.6
 ### Fixed
 - Parse to int user id in verifyCode()

@@ -2,6 +2,7 @@
 
 namespace Tzm\Authorizator;
 
+use App\User;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -13,14 +14,13 @@ abstract class AuthorizatorTestCase extends BaseTestCase
     use CreatesApplication;
 
     protected $factory;
+    protected $user;
 
     protected function setUp(): void
     {
-        $pathToFactories = realpath(dirname(__DIR__) . '/database/factories');
-
         parent::setUp();
-
-        // This overrides the $this->factory that is established in TestBench's setUp method above
-        $this->factory = Factory::construct(\Faker\Factory::create(), $pathToFactories);
+        $this->user = factory(User::class)->create();
+        $this->actingAs($this->user);
+        $this->factory = Factory::construct(\Faker\Factory::create(), realpath(dirname(__DIR__) . '/database/factories'));
     }
 }
