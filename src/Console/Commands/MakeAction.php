@@ -2,41 +2,26 @@
 
 namespace Tzm\Authorizator\Console\Commands;
 
-use Illuminate\Console\Command;
+use Illuminate\Console\GeneratorCommand;
 
-class MakeCommand extends Command
+class MakeAction extends GeneratorCommand
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'authorizator:make';
+    protected $signature = 'authorizator:make-action {name}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Make new ';
+    protected $description = 'Make a new Authorizatior Action';
 
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    protected function getStub()
     {
-        parent::__construct();
-    }
-
-    /**
-     * Execute the console command.
-     *
-     * @return mixed
-     */
-    public function handle()
-    {
-
+        return dirname(__DIR__, 2) . '/stubs/Action.stub';
     }
 }
