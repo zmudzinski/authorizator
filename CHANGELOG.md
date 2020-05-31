@@ -2,11 +2,12 @@
 
 ## v1.0.7
 ### Added
-- Feature tests
+- Feature tests for Controller and Actions
 - Example Action for tests
-- Factory for Authorizator Model
+- Create Actions and Channels by Artisan command
 ### Changed
 - Location of database migration
+- Example Classes renamed to Test (for Feature Tests)
 
 ## v1.0.6
 ### Fixed
