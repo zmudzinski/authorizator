@@ -4,7 +4,7 @@
 ![Laravel version](https://img.shields.io/badge/Laravel->%3D5.8-red?style=flat-square)
 ![GitHub issues](https://img.shields.io/github/issues/zmudzinski/authorizator?style=flat-square)
 
-This is an easy to use, powerful and extendable Laravel package for the authorization of user actions via custom channels. It works by delivering an authorization code to the user (for e.g. via sms or e-mail) and then verifing it. 
+This is an easy to use, tested, powerful and extendable Laravel package for the authorization of user actions via custom channels. It works by delivering an authorization code to the user (for e.g. via sms or e-mail) and then verifing it. 
 
 You can configure as many channels as you want. Each action can provide any channel configuration.
 Blade template and VUE component included. 
@@ -56,9 +56,8 @@ Flow of package is presented on image below:
 
 ![flowchart](.images/flowchart.png)
 
-1. If action that needs additional authorization occurs, the form is displayed. **User must be logged in**.
-2. User chooses the channel (each action can have own channels, by default you can use one or 
-as many channels as you want.
+1. If action provided by user, needs additional authorization occurs, the form is displayed. **User must be logged in** (Of course you can implement your own logic).
+2. User chooses the channel (each Action can have own Channels, by default you can use one or as many channels as you want.
 3. Code is generated and send via given channel to a user.
 4. A user enters the code.
 5. After a successful validation of the code the custom action is executed.
@@ -66,12 +65,20 @@ as many channels as you want.
 ### How it works in details
 To understand package workflow let's get deeper into details. 
 
-There are two types of classes that need to provide `Tzm\Authorizator\Service\AuthorizatorAction` and `Tzm\Authorizator\Service\AuthorizatorChannels\Channel`. Both are abstract, which means that you have to inherit them in your implementation. First one is responsible for handling the given action of authorization. In this class you will set the action that will be executed after successful verification of the authorization code. This class also has the information about the return path after validation, code time expiration and allowed channels. The second one provides code delivery channel like e-mail, SMS, etc. It contains a method that delivers the authorization code to the user . 
+There are two types of classes that need to provide `Tzm\Authorizator\Service\AuthorizatorAction` and `Tzm\Authorizator\Service\AuthorizatorChannels\Channel`. First one is responsible for handling the given action of authorization. In this class you will set the action that will be executed after successful verification of the authorization code. This class also has the information about the return path after validation, code time expiration and allowed channels. The second one provides code delivery channel like e-mail, SMS, etc. It contains a method that delivers the authorization code to the user.
+Both can be created by artisan command:
+
+```bash
+php artisan authorizator:make-action
+```
+```bash
+php artisan authorizator:make-channel
+```
 
 Out of the box this package comes with vue component. This component has all forms and methods. There are two endpoints: `authorization/send` and `authorization/check` (both use `POST` method). These endpoints are in `Tzm\Authorizator\Controller\AuthorizationController`. There is also `authorization/create` endpoint but this we will discussed later. 
 
 In the Controller in which authorization is requested (or any other place like middleware etc.) new authorization in database is created. This happens by executing static method `Transaction::createAuth()`.
- The `Transaction` object extends `Tzm\Authorizator\Service\AuthorizatorAction` class. Also new variable is stored in user session (with default name `_authorizator_uuid` and contains `uuid` form database). Next by `returnView()` method the view is returned to user. So, simply the Controller will look like:
+ The `Transaction` object extends `Tzm\Authorizator\Service\AuthorizatorAction` class. Also new variable is stored in user session (with default name `_authorizator_uuid` and contains `uuid` form database). Next by `response()` method the view is returned to user. So, simply the Controller will looks like:
 ```php
 use App\Services\AuthorizationActions\Transaction;
 
@@ -79,18 +86,19 @@ class TransactionController extends Controller
 {
     public function create()
     {
-        return Transaction::createAuth()->returnView();
+        return Transaction::createAuth()->response();
     }
 }
 ```
-
 **Notice:** `Transaction` class inherit `Tzm\Authorizator\Service\AuthorizatorAction`.
+
+You can also specify response type (Blade view or Http response code). Basically you can set property `$shouldReturnView` to false to recieve the responde code `201` or you can use `setResponseAsView(bool $shouldReturnView)` method.
 
 In the vue component user chooses delivery channel (if there is more than one). Request is sent to `authorization/send` endpoint by `POST` method.  
 
 Next, code is delivered to the user, by a method `sendMessage()` from inherited class of `Tzm\Authorizator\Service\AuthorizatorChannel\Channel`. This is done by `authorization/send` endpoint.
 
-User enters this code into form. If code is valid (`authorization/check` endpoint), it is set in database as used (column `verified_at` is set to current time). Finally the `afterAuthorization()` from inherited `Tzm\Authorizator\Service\AuthorizatorAction` class is executed. This is the most important action in this package. In this method you write the code that will be run after successful validation of the code. 
+User enters this code into form. If code is valid (`authorization/check` endpoint), it is set in database as used (column `verified_at` is set to current time). Finally, the `afterAuthorization()` from inherited `Tzm\Authorizator\Service\AuthorizatorAction` class is executed. This is the most important action in this package. In this method you write the code that will be run after successful validation of the code. 
 
 #### Create authorization by POST method
 If your application needs to create a new authorization code by `POST` method you can use `authorization/create` endpoint. 
@@ -116,26 +124,28 @@ Notice that your application needs to use vue.js: https://laravel.com/docs/maste
 Read more about customization package in [Customization](#customization) section.
 
 ### Create code delivery channel
-You can add an example channel class by 
+You can add an example channel class by Artisan command:
 ```bash
-php artisan vendor:publish --tag=authorizator.example-channel
+php artisan authorizator:make-channel
 ```
-This class will be published in `app/Services/AuthorizatorChannels/` folder. 
 
 Note that channel class must extend `Tzm\Authorizator\Service\AuthorizatorChannels\Channel` abstract class otherwise `AuthorizatorException` will be thrown. 
 
-This class requires two methods:
+This class requires three methods:
  * `getChannelDescription()` - will generate description of current channel, f.ex. it could be generated from  localization `.json` file. It will be shown in channel choose form in the radio label.
  * `getChannelName()` - returns channel name. It will be displayed if there will be only one channel.  
  * `sendMessage(User $user, $code)` - this method provide code delivery to the user. In this method you will handle how the code will  be delivered to user. F.ex. if you want to send code by email you can use Laravel mail facade: 
  `Mail::to($user)->send(new SendAuthorizationCode($code))`. 
- 
- Don't forget to run `composer dump-autoload`.
 
 ### Create an authorization action
-Afterwards you have to create a new class that inherits `Tzm\Authorizator\Service\AuthorizatorAction`. It handles an action that requires authorization. 
+Create a new Action by Artisan command: 
 
-Class must declare method `afterAuthorization()`. This method will be called after successful authorization f.ex. a money transfer will be executed. By `$this->authorizarion` you can access to your `Authorization` model. Finally you have to define `$allowedChannels` array contains name of code delivery channel classes that will be assign to this action f.ex.:
+```bash
+php artisan authorizator:make-action
+```
+
+Class must declare method `afterAuthorization()`. This method will be called after successful authorization f.ex. a money transfer will be executed. By `getAuthorizationModel()` you can access to your `Authorization` model. Finally, you have to define `$allowedChannels` array contains name of code delivery channel classes that will be assign to this action f.ex.:
+
 ```php
 protected $allowedChannels = [
     EmailChannel::class,
@@ -146,8 +156,6 @@ Furthermore you can set the code expiration time of in `$expiresInMinutes` prope
 
 Notice that if your app implements `User` model is in other namespace than `App\User` you can override method 
 `AuthorizatorAction::getUser()`.
-
-Don't forget to run `composer dump-autoload`.
 
 ### Create view template
 The package's view contains only form with vue component:
@@ -173,10 +181,10 @@ So to implement it in your application you have to publish it:
 ```bash
 php artisan vendor:publish --tag=authorizator.views
 ```
-Finally you can extends this view for your master template. Don't worry, this view is initialized in `AuthorizatorProvider` with name so there is no more action needed. 
+Finally, you can extends this view for your master template. Don't worry, this view is initialized in `AuthorizatorProvider` with name so there is no more action needed. 
 
 ### Make it works
-Finally we have all required elements: delivery channel class, action class, Blade view and generated vue component. Now it's time to set it all.
+Finally, we have all required elements: delivery channel class, action class, Blade view and generated vue component. Now it's time to set it all.
 
 Create an example controller: 
 ```php
@@ -186,7 +194,7 @@ class TransactionController extends Controller
 {
     public function create()
     {
-        return Transaction::createAuth()->returnView();
+        return Transaction::createAuth()->response();
     }
 }
 ```

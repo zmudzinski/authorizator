@@ -1,10 +1,10 @@
 <?php
 
-namespace Tzm\Authorizator\Service\AuthorizatorChannels;
+namespace {{ namespace }};
 
 use Tzm\Authorizator\Service\AuthorizatorChannels\Channel;
 
-class ExampleChannel extends Channel
+class {{ class }} extends Channel
 {
 
     /**
@@ -15,7 +15,7 @@ class ExampleChannel extends Channel
      */
     public function getChannelDescription(): string
     {
-        return 'Send code by email';
+        // TODO: Return a short description (e.g. Send code via SMS)
     }
 
     /**
@@ -26,7 +26,7 @@ class ExampleChannel extends Channel
      */
     public function getChannelName(): string
     {
-        return 'E-mail';
+        // TODO: Return a channel name (e.g. SMS)
     }
 
     /**
@@ -38,8 +38,6 @@ class ExampleChannel extends Channel
      */
     public function sendMessage($user, $code)
     {
-        session(['user_id' => $user->id, 'code' => $code]);
+        // TODO: Send code to user
     }
-
-
 }

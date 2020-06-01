@@ -4,15 +4,15 @@ namespace Tzm\Authorizator\Feature;
 
 use Tzm\Authorizator\AuthorizatorTestCase;
 use Tzm\Authorizator\Model\Authorization;
-use Tzm\Authorizator\Service\AuthorizatorChannels\ExampleChannel;
-use Tzm\Authorizator\Service\ExampleAction;
+use Tzm\Authorizator\Service\AuthorizatorChannels\TestChannel;
+use Tzm\Authorizator\Service\TestAction;
 
 class ControllerTests extends AuthorizatorTestCase
 {
 
     public function createNewAuthorization()
     {
-        return $this->post(route('authorizator.create', ['class' => ExampleAction::class]));
+        return $this->post(route('authorizator.create', ['class' => TestAction::class]));
     }
 
     /** @test */
@@ -27,7 +27,7 @@ class ControllerTests extends AuthorizatorTestCase
     public function send()
     {
         $this->createNewAuthorization();
-        $response = $this->post(route('authorizator.send', ['channel' => ExampleChannel::class]));
+        $response = $this->post(route('authorizator.send', ['channel' => TestChannel::class]));
         $response->assertJsonFragment(['status' => 'ok']);
         $response->assertStatus(200);
         $response->assertSessionHas('code');
@@ -38,7 +38,7 @@ class ControllerTests extends AuthorizatorTestCase
     public function verify()
     {
         $this->createNewAuthorization();
-        $this->post(route('authorizator.send', ['channel' => ExampleChannel::class]))
+        $this->post(route('authorizator.send', ['channel' => TestChannel::class]))
             ->assertJsonFragment(['status' => 'ok'])
             ->assertStatus(200)
             ->assertSessionHas(Authorization::SESSION_UUID_NAME);
