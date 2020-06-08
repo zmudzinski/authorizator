@@ -1,5 +1,10 @@
 # Release Notes
 
+## v1.0.8
+### Changed
+- Location of stubs
+- Set default namespaces for Actions and Channels
+
 ## v1.0.7
 ### Added
 - Feature tests for Controller and Actions

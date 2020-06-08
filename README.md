@@ -128,6 +128,7 @@ You can add an example channel class by Artisan command:
 ```bash
 php artisan authorizator:make-channel
 ```
+This class will appear in `app\Authorizator\Channels` folder.
 
 Note that channel class must extend `Tzm\Authorizator\Service\AuthorizatorChannels\Channel` abstract class otherwise `AuthorizatorException` will be thrown. 
 
@@ -143,6 +144,7 @@ Create a new Action by Artisan command:
 ```bash
 php artisan authorizator:make-action
 ```
+This class will appear in `app\Authorizator\Actions` folder.
 
 Class must declare method `afterAuthorization()`. This method will be called after successful authorization f.ex. a money transfer will be executed. By `getAuthorizationModel()` you can access to your `Authorization` model. Finally, you have to define `$allowedChannels` array contains name of code delivery channel classes that will be assign to this action f.ex.:
 

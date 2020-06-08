@@ -6,6 +6,7 @@ use Illuminate\Console\GeneratorCommand;
 
 class MakeChannel extends GeneratorCommand
 {
+
     /**
      * The name and signature of the console command.
      *
@@ -14,14 +15,31 @@ class MakeChannel extends GeneratorCommand
     protected $signature = 'authorizator:make-channel {name}';
 
     /**
+     * Get the default namespace for the class.
+     *
+     * @param  string $rootNamespace
+     *
+     * @return string
+     */
+    protected function getDefaultNamespace($rootNamespace)
+    {
+        return $rootNamespace . '\Authorizator\Channels';
+    }
+
+    /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Make a new Authorizatior Channel';
 
+    /**
+     * Get the stub file for the generator.
+     *
+     * @return string
+     */
     protected function getStub()
     {
-        return dirname(__DIR__, 2) . '/stubs/Channel.stub';
+        return __DIR__ . '/stubs/Channel.stub';
     }
 }

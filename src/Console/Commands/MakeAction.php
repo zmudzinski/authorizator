@@ -20,8 +20,25 @@ class MakeAction extends GeneratorCommand
      */
     protected $description = 'Make a new Authorizatior Action';
 
+    /**
+     * Get the default namespace for the class.
+     *
+     * @param  string $rootNamespace
+     *
+     * @return string
+     */
+    protected function getDefaultNamespace($rootNamespace)
+    {
+        return $rootNamespace . '\Authorizator\Actions';
+    }
+
+    /**
+     * Get the stub file for the generator.
+     *
+     * @return string
+     */
     protected function getStub()
     {
-        return dirname(__DIR__, 2) . '/stubs/Action.stub';
+        return __DIR__ . '/stubs/Action.stub';
     }
 }
